@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -16,17 +17,16 @@
 # specific language governing permissions and limitations
 # under the License.
 
-"""Example DAG demonstrating the usage of the BashOperator."""
-
+from builtins import range
 from datetime import timedelta
 
-from airflow import DAG
-from airflow.operators.bash import BashOperator
+from airflow.models import DAG
+from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.utils.dates import days_ago
 
 args = {
-    'owner': 'airflow',
+    'owner': 'Airflow',
     'start_date': days_ago(2),
 }
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -15,12 +16,12 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
-"""Example of the LatestOnlyOperator"""
-
+"""
+Example of the LatestOnlyOperator
+"""
 import datetime as dt
 
-from airflow import DAG
+from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
 from airflow.utils.dates import days_ago

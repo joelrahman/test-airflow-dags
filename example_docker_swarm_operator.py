@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -16,36 +17,35 @@
 # specific language governing permissions and limitations
 # under the License.
 
-"""Example DAG demonstrating the usage of the XComArgs."""
-
-from airflow import DAG
-from airflow.operators.python import PythonOperator
+"""
+from datetime import timedelta
 from airflow.utils.dates import days_ago
+from airflow import DAG
+from airflow.contrib.operators.docker_swarm_operator import DockerSwarmOperator
 
-args = {
+default_args = {
     'owner': 'airflow',
-    'start_date': days_ago(2),
+    'depends_on_past': False,
+    'start_date': days_ago(1),
+    'email': ['airflow@example.com'],
+    'email_on_failure': False,
+    'email_on_retry': False
 }
 
+dag = DAG(
+    'docker_swarm_sample',
+    default_args=default_args,
+    schedule_interval=timedelta(minutes=10),
+    catchup=False
+)
 
-def dummy(*args, **kwargs):
-    """Dummy function"""
-    return "pass"
-
-
-with DAG(
-    dag_id='example_xcom_args',
-    default_args=args,
-    schedule_interval=None,
-    tags=['example']
-) as dag:
-    task1 = PythonOperator(
-        task_id='task1',
-        python_callable=dummy,
+with dag as dag:
+    t1 = DockerSwarmOperator(
+        api_version='auto',
+        docker_url='tcp://localhost:2375', # Set your docker URL
+        command='/bin/sleep 10',
+        image='centos:latest',
+        auto_remove=True,
+        task_id='sleep_with_swarm',
     )
-
-    task2 = PythonOperator(
-        task_id='task2',
-        python_callable=dummy,
-        op_kwargs={"dummy": task1.output},
-    )
+"""
