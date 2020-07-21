@@ -116,6 +116,7 @@ k = KubernetesPodOperator(dag=dag,
                         # affinity=affinity,
                         is_delete_operator_pod=True,
                         hostnetwork=False,
+                        startup_timeout_seconds=360
                         # tolerations=tolerations,
                         # configmaps=configmaps
                         )
