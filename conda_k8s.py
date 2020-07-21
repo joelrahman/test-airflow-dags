@@ -13,7 +13,7 @@ args = {
 }
 
 dag = DAG(
-    dag_id='example_kubernetes',
+    dag_id='conda_k8s_test',
     default_args=args,
     schedule_interval=None,
     tags=['example']
