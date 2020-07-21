@@ -104,8 +104,9 @@ run_this = BashOperator(
 k = KubernetesPodOperator(dag=dag,
                         namespace='default',
                         image="joelrahman/conda-python-science",
-                        cmds=["python", "-c"],
-                        arguments=["'import pandas; print(pandas._version.get_versions())'"],
+                        cmds=["python", "-V"],
+                        # cmds=["python", "-c"],
+                        # arguments=["'import pandas; print(pandas._version.get_versions())'"],
                         labels={"foo": "bar"},
                         # secrets=[secret_file, secret_env, secret_all_keys],
                         # ports=[port]
