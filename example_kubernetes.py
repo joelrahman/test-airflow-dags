@@ -101,7 +101,7 @@ run_this = BashOperator(
     dag=dag,
 )
 
-for i in range(3):
+for i in range(5):
   k = KubernetesPodOperator(dag=dag,
                             namespace='default',
                             image="ubuntu:16.04",
@@ -112,8 +112,8 @@ for i in range(3):
                             # ports=[port]
                             # volumes=[volume],
                             # volume_mounts=[volume_mount]
-                            name="test",
-                            task_id="task",
+                            name="test-%d"%i,
+                            task_id="task-%d"%i,
                             # affinity=affinity,
                             is_delete_operator_pod=True,
                             hostnetwork=False,
