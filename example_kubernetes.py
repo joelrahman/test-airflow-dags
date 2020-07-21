@@ -1,3 +1,4 @@
+from airflow.utils.dates import days_ago
 from airflow.models import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
