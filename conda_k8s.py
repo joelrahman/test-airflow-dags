@@ -101,28 +101,57 @@ run_this = BashOperator(
     dag=dag,
 )
 
-k = KubernetesPodOperator(dag=dag,
-                        namespace='default',
-                        image="joelrahman/conda-python-science",
-                        # cmds=["python", "-V"],
-                        cmds=["python", "-c", "'import pandas; print(pandas._version.get_versions())'"],
-                        arguments=[],
-                        # arguments=["'print(\"hello world\")'"],
-                        # arguments=["'import pandas; print(pandas._version.get_versions())'"],
-                        labels={"foo": "bar"},
-                        # secrets=[secret_file, secret_env, secret_all_keys],
-                        # ports=[port]
-                        # volumes=[volume],
-                        # volume_mounts=[volume_mount]
-                        name="task-probe-pandas",
-                        task_id="task-probe-pandas",
-                        # affinity=affinity,
-                        is_delete_operator_pod=True,
-                        hostnetwork=False,
-                        startup_timeout_seconds=360
-                        # tolerations=tolerations,
-                        # configmaps=configmaps
-                        )
-k >> run_this
+probe = KubernetesPodOperator(dag=dag,
+                              namespace='default',
+                              image="joelrahman/conda-python-science",
+                              # cmds=["python", "-V"],
+                              cmds=["python", "-c", "'import pandas; print(pandas._version.get_versions())'"],
+                              arguments=[],
+                              # arguments=["'print(\"hello world\")'"],
+                              # arguments=["'import pandas; print(pandas._version.get_versions())'"],
+                              labels={"foo": "bar"},
+                              # secrets=[secret_file, secret_env, secret_all_keys],
+                              # ports=[port]
+                              # volumes=[volume],
+                              # volume_mounts=[volume_mount]
+                              name="task-probe-pandas",
+                              task_id="task-probe-pandas",
+                              # affinity=affinity,
+                              is_delete_operator_pod=True,
+                              hostnetwork=False,
+                              startup_timeout_seconds=360
+                              # tolerations=tolerations,
+                              # configmaps=configmaps
+                              )
+
+python_hello = KubernetesPodOperator(dag=dag,
+            namespace='default',
+                              image="joelrahman/conda-python-science",
+                              cmds=["python", "-c", "'print(\"hello world\")'"],
+                              arguments=[],
+                              labels={"foo": "bar"},
+                              name="task-probe-pandas",
+                              task_id="task-probe-pandas",
+                              is_delete_operator_pod=True,
+                              hostnetwork=False,
+                              startup_timeout_seconds=360
+                              )
+
+python_version = KubernetesPodOperator(dag=dag,
+                              namespace='default',
+                              image="joelrahman/conda-python-science",
+                              cmds=["python", "-V"],
+                              arguments=[],
+                              labels={"foo": "bar"},
+                              name="task-probe-pandas",
+                              task_id="task-probe-pandas",
+                              is_delete_operator_pod=True,
+                              hostnetwork=False,
+                              startup_timeout_seconds=360
+                              )
+
+probe >> run_this
+python_version >> run_this
+python_hello >> run_this
 
 
