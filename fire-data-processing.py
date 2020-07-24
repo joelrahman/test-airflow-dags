@@ -115,11 +115,8 @@ for tile in AU_TILES:
     task = KubernetesPodOperator(dag=dag,
                                  namespace='default',
                                  image="anuwald/fire-data-processing",
-                                 cmds=["python", "update_fmc.y","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
-                                 #   cmds=["python", "-c", "print(__name__)"],
+                                 cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
                                  arguments=[],
-                                 # arguments=["'print(\"hello world\")'"],
-                                 # arguments=["'import pandas; print(pandas._version.get_versions())'"],
                                  labels={"foo": "bar"},
                                  # secrets=[secret_file, secret_env, secret_all_keys],
                                  # ports=[port]
