@@ -102,11 +102,12 @@ pod_volume = Volume(name='g-data', configs=volume_config)
 
 AU_TILES = [
     "h27v11", "h27v12", "h28v11", "h28v12",
-    "h28v13", "h29v10", "h29v11", "h29v12",
-    "h29v13", "h30v10", "h30v11", "h30v12",
-    "h31v10", "h31v11", "h31v12", "h32v10",
-    "h32v11"
 ]
+#     "h28v13", "h29v10", "h29v11", "h29v12",
+#     "h29v13", "h30v10", "h30v11", "h30v12",
+#     "h31v10", "h31v11", "h31v12", "h32v10",
+#     "h32v11"
+# ]
 
 run_this = BashOperator(
     task_id='run_after_loop',
@@ -114,7 +115,7 @@ run_this = BashOperator(
     dag=dag,
 )
 
-fmc_mosaic_task_name="update_fmc_mosaic"
+fmc_mosaic_task_name="DUMMY_update_fmc_mosaic"
 fmc_mosaic_task = KubernetesPodOperator(dag=dag,
                                 namespace='default',
                                 image="anuwald/fire-data-processing",
@@ -137,7 +138,7 @@ fmc_mosaic_task = KubernetesPodOperator(dag=dag,
                                 # configmaps=configmaps
                                 )
 
-flam_mosaic_task_name="update_flammability_mosaic"
+flam_mosaic_task_name="DUMMY_update_flammability_mosaic"
 flam_mosaic_task = KubernetesPodOperator(dag=dag,
                                 namespace='default',
                                 image="anuwald/fire-data-processing",
@@ -192,7 +193,7 @@ for tile in AU_TILES:
                                  )
     fmc_task >> fmc_mosaic_task
 
-    flam_task_name="update_flam_%s"%tile
+    flam_task_name="DUMMY_update_flam_%s"%tile
     flam_task = KubernetesPodOperator(dag=dag,
                                  namespace='default',
                                  image="anuwald/fire-data-processing",
