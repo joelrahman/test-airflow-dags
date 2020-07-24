@@ -143,6 +143,30 @@ debug_task_one = KubernetesPodOperator(dag=dag,
 debug_task_one >> run_this
 
 
+debug_task_one = KubernetesPodOperator(dag=dag,
+                                namespace='default',
+                                image="anuwald/fire-data-processing",
+                                cmds=["env"],
+                                # cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
+                                arguments=[],
+                                labels={"foo": "bar"},
+                                env_vars=env_vars,
+                                secrets=secrets,
+                                # ports=[port]
+                                volumes=[pod_volume],
+                                volume_mounts=[volume_mount],
+                                name='debug_task_two',
+                                task_id='debug_task_two',
+                                # affinity=affinity,
+                                is_delete_operator_pod=True,
+                                hostnetwork=False,
+                                startup_timeout_seconds=360
+                                # tolerations=tolerations,
+                                # configmaps=configmaps
+                                )
+
+debug_task_one >> run_this
+
 fmc_mosaic_task_name="DUMMY_update_fmc_mosaic"
 fmc_mosaic_task = KubernetesPodOperator(dag=dag,
                                 namespace='default',
