@@ -23,8 +23,9 @@ env_vars = {
     'SSH_CRED':'/gadi/id_rsa'
 }
 
-data_key = Secret('volume', '/gadi/id_rsa', 'gadi','id_rsa')
+data_key = Secret('volume', '/gadi/id_rsa', 'gadi','id_rsa_gadi')
 data_id = Secret('volume','/etc/ssh/ssh_known_hosts','gadi-id','fingerprint')
+config_file = Secret('volume','/opt/fire/defaults.json','fmc-config','defaults-mk.json')
 # secret_env  = Secret('env', 'SQL_CONN', 'airflow-secrets', 'sql_alchemy_conn')
 # secret_all_keys  = Secret('env', None, 'airflow-secrets-2')
 volume_mount = VolumeMount('g-data',
@@ -124,7 +125,7 @@ fmc_mosaic_task = KubernetesPodOperator(dag=dag,
                                 arguments=[],
                                 labels={"foo": "bar"},
                                 env_vars=env_vars,
-                                secrets=[data_key,data_id],
+                                secrets=[data_key,data_id,config_file],
                                 # ports=[port]
                                 volumes=[pod_volume],
                                 volume_mounts=[volume_mount],
@@ -147,7 +148,7 @@ flam_mosaic_task = KubernetesPodOperator(dag=dag,
                                 arguments=[],
                                 labels={"foo": "bar"},
                                 env_vars=env_vars,
-                                secrets=[data_key,data_id],
+                                secrets=[data_key,data_id,config_file],
                                 # ports=[port]
                                 volumes=[pod_volume],
                                 volume_mounts=[volume_mount],
@@ -178,7 +179,7 @@ for tile in AU_TILES:
                                  arguments=[],
                                  labels={"foo": "bar"},
                                  env_vars=env_vars,
-                                 secrets=[data_key,data_id],
+                                 secrets=[data_key,data_id,config_file],
                                  # ports=[port]
                                  volumes=[pod_volume],
                                  volume_mounts=[volume_mount],
@@ -205,7 +206,7 @@ for tile in AU_TILES:
                                  secrets=[data_key,data_id],
                                  # ports=[port]
                                  volumes=[pod_volume],
-                                 volume_mounts=[volume_mount],
+                                 volume_mounts=[volume_mount,config_file],
                                  name=flam_task_name,
                                  task_id=flam_task_name,
                                  # affinity=affinity,
