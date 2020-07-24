@@ -123,8 +123,8 @@ for tile in AU_TILES:
                                  labels={"foo": "bar"},
                                  # secrets=[secret_file, secret_env, secret_all_keys],
                                  # ports=[port]
-                                 volumes=[volume],
-                                 volume_mounts=[volume_mount]
+                                 volumes=[pod_volume],
+                                 volume_mounts=[volume_mount],
                                  name=task_name,
                                  task_id=task_name,
                                  # affinity=affinity,
