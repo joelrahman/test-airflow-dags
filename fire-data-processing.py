@@ -110,9 +110,56 @@ run_this = BashOperator(
     dag=dag,
 )
 
+fmc_mosaic_task_name="update_fmc_mosaic"
+fmc_mosaic_task = KubernetesPodOperator(dag=dag,
+                                namespace='default',
+                                image="anuwald/fire-data-processing",
+                                cmds=["python", "-c","print('Dummy task - pretending to process FMC mosaic')"],
+                                # cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
+                                arguments=[],
+                                labels={"foo": "bar"},
+                                # secrets=[secret_file, secret_env, secret_all_keys],
+                                # ports=[port]
+                                volumes=[pod_volume],
+                                volume_mounts=[volume_mount],
+                                name=fmc_mosaic_task_name,
+                                task_id=fmc_mosaic_task_name,
+                                # affinity=affinity,
+                                is_delete_operator_pod=True,
+                                hostnetwork=False,
+                                startup_timeout_seconds=360
+                                # tolerations=tolerations,
+                                # configmaps=configmaps
+                                )
+
+flam_mosaic_task_name="update_flammability_mosaic"
+flam_mosaic_task = KubernetesPodOperator(dag=dag,
+                                namespace='default',
+                                image="anuwald/fire-data-processing",
+                                cmds=["python", "-c","print('Dummy task - pretending to process Flammability mosaic')"],
+                                # cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
+                                arguments=[],
+                                labels={"foo": "bar"},
+                                # secrets=[secret_file, secret_env, secret_all_keys],
+                                # ports=[port]
+                                volumes=[pod_volume],
+                                volume_mounts=[volume_mount],
+                                name=flam_mosaic_task_name,
+                                task_id=flam_mosaic_task_name,
+                                # affinity=affinity,
+                                is_delete_operator_pod=True,
+                                hostnetwork=False,
+                                startup_timeout_seconds=360
+                                # tolerations=tolerations,
+                                # configmaps=configmaps
+                                )
+
+fmc_mosaic_task >> run_this
+flam_mosaic_task >> run_this
+
 for tile in AU_TILES:
-    task_name="update_fmc_%s"%tile
-    task = KubernetesPodOperator(dag=dag,
+    fmc_task_name="update_fmc_%s"%tile
+    fmc_task = KubernetesPodOperator(dag=dag,
                                  namespace='default',
                                  image="anuwald/fire-data-processing",
                                  cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
@@ -122,8 +169,8 @@ for tile in AU_TILES:
                                  # ports=[port]
                                  volumes=[pod_volume],
                                  volume_mounts=[volume_mount],
-                                 name=task_name,
-                                 task_id=task_name,
+                                 name=fmc_task_name,
+                                 task_id=fmc_task_name,
                                  # affinity=affinity,
                                  is_delete_operator_pod=True,
                                  hostnetwork=False,
@@ -131,7 +178,30 @@ for tile in AU_TILES:
                                  # tolerations=tolerations,
                                  # configmaps=configmaps
                                  )
-    task >> run_this
+    fmc_task >> fmc_mosaic_task
 
+    flam_task_name="update_flam_%s"%tile
+    flam_task = KubernetesPodOperator(dag=dag,
+                                 namespace='default',
+                                 image="anuwald/fire-data-processing",
+                                #  cmds=["python", "update_flammability.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
+                                 cmds=["python", "-c","print('Dummy task - pretending to process flammability for tile %s'%tile)"],
+                                 arguments=[],
+                                 labels={"foo": "bar"},
+                                 # secrets=[secret_file, secret_env, secret_all_keys],
+                                 # ports=[port]
+                                 volumes=[pod_volume],
+                                 volume_mounts=[volume_mount],
+                                 name=flam_task_name,
+                                 task_id=flam_task_name,
+                                 # affinity=affinity,
+                                 is_delete_operator_pod=True,
+                                 hostnetwork=False,
+                                 startup_timeout_seconds=360
+                                 # tolerations=tolerations,
+                                 # configmaps=configmaps
+                                 )
 
+    fmc_task >> flam_task
+    flam_task >> flam_mosaic_task
 
