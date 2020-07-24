@@ -218,12 +218,17 @@ flam_mosaic_task >> run_this
 
 for tile in AU_TILES:
     fmc_task_name="update_fmc_%s"%tile
+    fmc_commands = [
+        "ln -s /etc/ssh/gadi-id/fingerprint /etc/ssh/ssh_known_hosts",
+        "chmod 600 /gadi/id_rsa_gadi",
+        "python update_fmc.py -t %s -d 2020 -dst /g/data/fmc_%s.nc -tmp /tmp"%(tile,tile)
+    ]
     fmc_task = KubernetesPodOperator(dag=dag,
                                  namespace='default',
                                  image="anuwald/fire-data-processing",
                                  cmds=[
                                      "/bin/bash","-c",
-                                     "ln -s /etc/ssh/gadi-id/fingerprint /etc/ssh/ssh_known_hosts && python update_fmc.py -t %s -d 2020 -dst /g/data/fmc_%s.nc -tmp /tmp"%(tile,tile)
+                                     " && ".join(fmc_commands)
                                  ],
                                 #  cmds=[
                                 #      "python", "update_fmc.py",
