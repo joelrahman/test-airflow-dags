@@ -24,7 +24,7 @@ env_vars = {
     'WALD_SETTINGS':'/opt/fire/config/defaults-mk.json'
 }
 
-data_key = Secret('volume', '/gadi', 'gadi','id_rsa_gadi')
+data_key = Secret('volume', '/gadi_orig', 'gadi','id_rsa_gadi')
 data_id = Secret('volume','/etc/ssh/gadi-id','gadi-id','fingerprint')
 config_file = Secret('volume','/opt/fire/config','fmc-config','defaults-mk.json')
 secrets = [data_key,data_id,config_file]
@@ -220,6 +220,8 @@ for tile in AU_TILES:
     fmc_task_name="update_fmc_%s"%tile
     fmc_commands = [
         "ln -s /etc/ssh/gadi-id/fingerprint /etc/ssh/ssh_known_hosts",
+        "mkdir /gadi",
+        "cp /gadi_orig/id_rsa_gadi /gadi",
         "chmod 600 /gadi/id_rsa_gadi",
         "python update_fmc.py -t %s -d 2020 -dst /g/data/fmc_%s.nc -tmp /tmp"%(tile,tile)
     ]
