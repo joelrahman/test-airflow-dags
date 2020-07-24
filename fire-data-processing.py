@@ -23,7 +23,7 @@ env_vars = {
     'SSH_CRED':'/gadi/id_rsa'
 }
 
-data_key = Secret('volume', '/gadi', 'gadi')
+data_key = Secret('volume', '/gadi/id_rsa', 'gadi','id_rsa')
 data_id = Secret('volume','/etc/ssh/ssh_known_hosts','gadi-id','fingerprint')
 # secret_env  = Secret('env', 'SQL_CONN', 'airflow-secrets', 'sql_alchemy_conn')
 # secret_all_keys  = Secret('env', None, 'airflow-secrets-2')
