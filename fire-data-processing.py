@@ -20,7 +20,7 @@ dag = DAG(
 )
 
 env_vars = {
-    'SSH_CRED'='/gadi/id_rsa'
+    'SSH_CRED':'/gadi/id_rsa'
 }
 
 data_key = Secret('volume', '/gadi', 'gadi')
