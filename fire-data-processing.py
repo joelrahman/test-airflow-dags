@@ -206,7 +206,7 @@ for tile in AU_TILES:
                                  secrets=[data_key,data_id,config_file],
                                  # ports=[port]
                                  volumes=[pod_volume],
-                                 volume_mounts=[volume_mount,config_file],
+                                 volume_mounts=[volume_mount],
                                  name=flam_task_name,
                                  task_id=flam_task_name,
                                  # affinity=affinity,
