@@ -203,7 +203,7 @@ for tile in AU_TILES:
                                  arguments=[],
                                  labels={"foo": "bar"},
                                  env_vars=env_vars,
-                                 secrets=[data_key,data_id],
+                                 secrets=[data_key,data_id,config_file],
                                  # ports=[port]
                                  volumes=[pod_volume],
                                  volume_mounts=[volume_mount,config_file],
