@@ -19,8 +19,12 @@ dag = DAG(
     tags=['afms']
 )
 
+env_vars = {
+    'SSH_CRED'='/gadi/id_rsa'
+}
 
-# secret_file = Secret('volume', '/etc/sql_conn', 'airflow-secrets', 'sql_alchemy_conn')
+data_key = Secret('volume', '/gadi', 'gadi')
+data_id = Secret('volume','/etc/ssh/ssh_known_hosts','gadi-id','fingerprint')
 # secret_env  = Secret('env', 'SQL_CONN', 'airflow-secrets', 'sql_alchemy_conn')
 # secret_all_keys  = Secret('env', None, 'airflow-secrets-2')
 volume_mount = VolumeMount('g-data',
@@ -118,7 +122,8 @@ fmc_mosaic_task = KubernetesPodOperator(dag=dag,
                                 # cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
                                 arguments=[],
                                 labels={"foo": "bar"},
-                                # secrets=[secret_file, secret_env, secret_all_keys],
+                                env_vars=env_vars,
+                                secrets=[data_key,data_id],
                                 # ports=[port]
                                 volumes=[pod_volume],
                                 volume_mounts=[volume_mount],
@@ -140,7 +145,8 @@ flam_mosaic_task = KubernetesPodOperator(dag=dag,
                                 # cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
                                 arguments=[],
                                 labels={"foo": "bar"},
-                                # secrets=[secret_file, secret_env, secret_all_keys],
+                                env_vars=env_vars,
+                                secrets=[data_key,data_id],
                                 # ports=[port]
                                 volumes=[pod_volume],
                                 volume_mounts=[volume_mount],
@@ -170,7 +176,8 @@ for tile in AU_TILES:
                                      "-tmp","/tmp"],
                                  arguments=[],
                                  labels={"foo": "bar"},
-                                 # secrets=[secret_file, secret_env, secret_all_keys],
+                                 env_vars=env_vars,
+                                 secrets=[data_key,data_id],
                                  # ports=[port]
                                  volumes=[pod_volume],
                                  volume_mounts=[volume_mount],
@@ -193,7 +200,8 @@ for tile in AU_TILES:
                                  cmds=["python", "-c","print('Dummy task - pretending to process flammability for tile %s')"%tile],
                                  arguments=[],
                                  labels={"foo": "bar"},
-                                 # secrets=[secret_file, secret_env, secret_all_keys],
+                                 env_vars=env_vars,
+                                 secrets=[data_key,data_id],
                                  # ports=[port]
                                  volumes=[pod_volume],
                                  volume_mounts=[volume_mount],
