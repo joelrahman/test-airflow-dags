@@ -190,7 +190,7 @@ for tile in AU_TILES:
                                  namespace='default',
                                  image="anuwald/fire-data-processing",
                                 #  cmds=["python", "update_flammability.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
-                                 cmds=["python", "-c","print('Dummy task - pretending to process flammability for tile %s'%tile)"],
+                                 cmds=["python", "-c","print('Dummy task - pretending to process flammability for tile %s')"%tile],
                                  arguments=[],
                                  labels={"foo": "bar"},
                                  # secrets=[secret_file, secret_env, secret_all_keys],
