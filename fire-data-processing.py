@@ -20,13 +20,14 @@ dag = DAG(
 )
 
 env_vars = {
-    'SSH_CRED':'/gadi/id_rsa'
+    'SSH_CRED':'/gadi/id_rsa',
+    'WALD_SETTINGS':'/opt/fire/config/defaults-mk.json'
 }
 
 data_key = Secret('volume', '/gadi/id_rsa', 'gadi','id_rsa_gadi')
 data_id = Secret('volume','/etc/ssh/ssh_known_hosts','gadi-id','fingerprint')
-config_file = Secret('volume','/opt/fire/defaults.json','fmc-config','defaults-mk.json')
-secrets = [data_key,data_id]#,config_file]
+config_file = Secret('volume','/opt/fire/config','fmc-config','defaults-mk.json')
+secrets = [data_key,data_id,config_file]
 # secret_env  = Secret('env', 'SQL_CONN', 'airflow-secrets', 'sql_alchemy_conn')
 # secret_all_keys  = Secret('env', None, 'airflow-secrets-2')
 volume_mount = VolumeMount('g-data',
@@ -104,8 +105,8 @@ pod_volume = Volume(name='g-data', configs=volume_config)
 
 AU_TILES = [
     "h27v11", "h27v12", "h28v11", "h28v12",
+    "h28v13", "h29v10", "h29v11", "h29v12",
 ]
-#     "h28v13", "h29v10", "h29v11", "h29v12",
 #     "h29v13", "h30v10", "h30v11", "h30v12",
 #     "h31v10", "h31v11", "h31v12", "h32v10",
 #     "h32v11"
@@ -116,6 +117,31 @@ run_this = BashOperator(
     bash_command='echo 1',
     dag=dag,
 )
+
+debug_task_one = KubernetesPodOperator(dag=dag,
+                                namespace='default',
+                                image="anuwald/fire-data-processing",
+                                cmds=["ls", "-lh","/gadi","/etc/ssh","/opt/fire/config"],
+                                # cmds=["python", "update_fmc.py","-t",tile,"-y","2020","-dst","/g/data/fmc_%s.nc"%tile],
+                                arguments=[],
+                                labels={"foo": "bar"},
+                                env_vars=env_vars,
+                                secrets=secrets,
+                                # ports=[port]
+                                volumes=[pod_volume],
+                                volume_mounts=[volume_mount],
+                                name='debug_task_one',
+                                task_id='debug_task_one',
+                                # affinity=affinity,
+                                is_delete_operator_pod=True,
+                                hostnetwork=False,
+                                startup_timeout_seconds=360
+                                # tolerations=tolerations,
+                                # configmaps=configmaps
+                                )
+
+debug_task_one >> run_this
+
 
 fmc_mosaic_task_name="DUMMY_update_fmc_mosaic"
 fmc_mosaic_task = KubernetesPodOperator(dag=dag,
