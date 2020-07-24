@@ -20,12 +20,12 @@ dag = DAG(
 )
 
 env_vars = {
-    'SSH_CRED':'/gadi/id_rsa',
+    'SSH_CRED':'/gadi/id_rsa_gadi',
     'WALD_SETTINGS':'/opt/fire/config/defaults-mk.json'
 }
 
-data_key = Secret('volume', '/gadi/id_rsa', 'gadi','id_rsa_gadi')
-data_id = Secret('volume','/etc/ssh/ssh_known_hosts','gadi-id','fingerprint')
+data_key = Secret('volume', '/gadi', 'gadi','id_rsa_gadi')
+data_id = Secret('volume','/etc/ssh/gadi-id','gadi-id','fingerprint')
 config_file = Secret('volume','/opt/fire/config','fmc-config','defaults-mk.json')
 secrets = [data_key,data_id,config_file]
 # secret_env  = Secret('env', 'SQL_CONN', 'airflow-secrets', 'sql_alchemy_conn')
@@ -198,11 +198,15 @@ for tile in AU_TILES:
                                  namespace='default',
                                  image="anuwald/fire-data-processing",
                                  cmds=[
-                                     "python", "update_fmc.py",
-                                     "-t",tile,
-                                     "-d","2020",
-                                     "-dst","/g/data/fmc_%s.nc"%tile,
-                                     "-tmp","/tmp"],
+                                     "/bin/bash","-c",
+                                     "ln -s /etc/ssh/gadi-id/fingerprint /etc/ssh/ssh_known_hosts && python update_fmc.py -t %s -d 2020 -dst /g/data/fmc_%s.nc -tmp /tmp"%(tile,tile)
+                                 ],
+                                #  cmds=[
+                                #      "python", "update_fmc.py",
+                                #      "-t",tile,
+                                #      "-d","2020",
+                                #      "-dst","/g/data/fmc_%s.nc"%tile,
+                                #      "-tmp","/tmp"],
                                  arguments=[],
                                  labels={"foo": "bar"},
                                  env_vars=env_vars,
